@@ -1,18 +1,11 @@
 import { Request, Response } from 'express';
+import * as tareasService from '../services/tareas.service';
 
-export interface Tarea {
-  id: number;
-  titulo: string;
-  descripcion: string;
-  completada: boolean;
-}
+export { resetTareas } from '../services/tareas.service';
 
-export const tareas: Tarea[] = [];
-let siguienteId = 1;
-
-export const resetTareas = (): void => {
-  tareas.length = 0;
-  siguienteId = 1;
+export const obtenerTareas = (_req: Request, res: Response): Response => {
+  const tareas = tareasService.obtenerTareas();
+  return res.status(200).json(tareas);
 };
 
 export const crearTarea = (req: Request, res: Response): Response => {
@@ -24,13 +17,6 @@ export const crearTarea = (req: Request, res: Response): Response => {
     });
   }
 
-  const nuevaTarea: Tarea = {
-    id: siguienteId++,
-    titulo,
-    descripcion,
-    completada: false,
-  };
-
-  tareas.push(nuevaTarea);
+  const nuevaTarea = tareasService.crearTarea(titulo, descripcion);
   return res.status(201).json(nuevaTarea);
 };
